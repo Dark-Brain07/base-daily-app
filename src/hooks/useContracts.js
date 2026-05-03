@@ -55,9 +55,9 @@ export function useContracts() {
       
       // ERC-8021 compliant builder code suffix
       const builderCode = import.meta.env.VITE_BUILDER_CODE || 'bc_p69yn51y'
-      const builderBytes = ethers.toUtf8Bytes(builderCode)
+      const builderBytes = ethers.utils.toUtf8Bytes(builderCode)
       const magicBytes = new Uint8Array([0x80, 0x21, 0x80, 0x21]) // ERC-8021 magic
-      const suffix = ethers.hexlify(new Uint8Array([...magicBytes, ...builderBytes]))
+      const suffix = ethers.utils.hexlify(new Uint8Array([...magicBytes, ...builderBytes]))
       
       const txData = await checkin.checkIn.populateTransaction()
       txData.data = txData.data + suffix.slice(2) // remove 0x prefix
@@ -81,9 +81,9 @@ export function useContracts() {
       
       // ERC-8021 compliant builder code suffix
       const builderCode = import.meta.env.VITE_BUILDER_CODE || 'bc_p69yn51y'
-      const builderBytes = ethers.toUtf8Bytes(builderCode)
+      const builderBytes = ethers.utils.toUtf8Bytes(builderCode)
       const magicBytes = new Uint8Array([0x80, 0x21, 0x80, 0x21]) // ERC-8021 magic
-      const suffix = ethers.hexlify(new Uint8Array([...magicBytes, ...builderBytes]))
+      const suffix = ethers.utils.hexlify(new Uint8Array([...magicBytes, ...builderBytes]))
       
       const txData = await nft.mint.populateTransaction({ value: 0 })
       txData.data = txData.data + suffix.slice(2)
