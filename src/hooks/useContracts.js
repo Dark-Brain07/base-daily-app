@@ -45,7 +45,12 @@ export function useContracts() {
     }
   }, [provider, address])
 
-  useEffect(() => { loadStats() }, [loadStats])
+  // Reset stats when address changes to ensure we aren't showing old wallet data
+  useEffect(() => {
+    setStats(null)
+    setNftMinted(false)
+    loadStats()
+  }, [address, loadStats])
 
   const doCheckIn = useCallback(async () => {
     if (!signer) return
