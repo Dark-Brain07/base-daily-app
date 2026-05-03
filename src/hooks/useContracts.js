@@ -52,7 +52,17 @@ export function useContracts() {
     setTxPending(true); setTxError(null); setTxHash(null)
     try {
       const checkin = new ethers.Contract(ADDRESSES.checkIn, CHECKIN_ABI, signer)
-      const tx = await checkin.checkIn()
+      
+      // ERC-8021 compliant builder code suffix
+      const builderCode = import.meta.env.VITE_BUILDER_CODE || 'bc_p69yn51y'
+      const builderBytes = ethers.toUtf8Bytes(builderCode)
+      const magicBytes = new Uint8Array([0x80, 0x21, 0x80, 0x21]) // ERC-8021 magic
+      const suffix = ethers.hexlify(new Uint8Array([...magicBytes, ...builderBytes]))
+      
+      const txData = await checkin.checkIn.populateTransaction()
+      txData.data = txData.data + suffix.slice(2) // remove 0x prefix
+      
+      const tx = await signer.sendTransaction(txData)
       setTxHash(tx.hash)
       await tx.wait()
       await loadStats()
@@ -68,7 +78,17 @@ export function useContracts() {
     setTxPending(true); setTxError(null); setTxHash(null)
     try {
       const nft = new ethers.Contract(ADDRESSES.nft, NFT_ABI, signer)
-      const tx  = await nft.mint({ value: 0 })
+      
+      // ERC-8021 compliant builder code suffix
+      const builderCode = import.meta.env.VITE_BUILDER_CODE || 'bc_p69yn51y'
+      const builderBytes = ethers.toUtf8Bytes(builderCode)
+      const magicBytes = new Uint8Array([0x80, 0x21, 0x80, 0x21]) // ERC-8021 magic
+      const suffix = ethers.hexlify(new Uint8Array([...magicBytes, ...builderBytes]))
+      
+      const txData = await nft.mint.populateTransaction({ value: 0 })
+      txData.data = txData.data + suffix.slice(2)
+      
+      const tx = await signer.sendTransaction(txData)
       setTxHash(tx.hash)
       await tx.wait()
       await loadStats()
