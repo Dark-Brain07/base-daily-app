@@ -53,15 +53,14 @@ export function useContracts() {
     try {
       const checkin = new ethers.Contract(ADDRESSES.checkIn, CHECKIN_ABI, signer)
       
-      // ERC-8021 compliant builder code suffix
+      // ERC-8021 compliant suffix
       const builderCode = import.meta.env.VITE_BUILDER_CODE || 'bc_p69yn51y'
-      const builderBytes = ethers.utils.toUtf8Bytes(builderCode)
-      const magicBytes = new Uint8Array([0x80, 0x21, 0x80, 0x21]) // ERC-8021 magic
-      const suffix = ethers.utils.hexlify(new Uint8Array([...magicBytes, ...builderBytes]))
+      const magic = '80218021802180218021802180218021'
+      const builderHex = ethers.utils.hexlify(ethers.utils.toUtf8Bytes(builderCode)).slice(2)
+      const suffix = magic + builderHex
       
-      // Ethers v5 syntax: contract.populateTransaction.method()
       const txData = await checkin.populateTransaction.checkIn()
-      txData.data = txData.data + suffix.slice(2) // remove 0x prefix
+      txData.data = txData.data + suffix
       
       const tx = await signer.sendTransaction(txData)
       setTxHash(tx.hash)
@@ -80,15 +79,14 @@ export function useContracts() {
     try {
       const nft = new ethers.Contract(ADDRESSES.nft, NFT_ABI, signer)
       
-      // ERC-8021 compliant builder code suffix
+      // ERC-8021 compliant suffix
       const builderCode = import.meta.env.VITE_BUILDER_CODE || 'bc_p69yn51y'
-      const builderBytes = ethers.utils.toUtf8Bytes(builderCode)
-      const magicBytes = new Uint8Array([0x80, 0x21, 0x80, 0x21]) // ERC-8021 magic
-      const suffix = ethers.utils.hexlify(new Uint8Array([...magicBytes, ...builderBytes]))
+      const magic = '80218021802180218021802180218021'
+      const builderHex = ethers.utils.hexlify(ethers.utils.toUtf8Bytes(builderCode)).slice(2)
+      const suffix = magic + builderHex
       
-      // Ethers v5 syntax: contract.populateTransaction.method()
       const txData = await nft.populateTransaction.mint({ value: 0 })
-      txData.data = txData.data + suffix.slice(2)
+      txData.data = txData.data + suffix
       
       const tx = await signer.sendTransaction(txData)
       setTxHash(tx.hash)
