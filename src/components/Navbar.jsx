@@ -40,7 +40,7 @@ const styles = {
 }
 
 export default function Navbar() {
-  const { address, connect, connecting } = useWallet()
+  const { address, connect, connectCoinbase, connecting } = useWallet()
   const location = useLocation()
 
   const isActive = (path) => location.pathname === path
@@ -60,15 +60,22 @@ export default function Navbar() {
         ))}
       </div>
 
-      {address ? (
-        <div style={styles.addrBadge}>
-          {address.slice(0, 6)}...{address.slice(-4)}
-        </div>
-      ) : (
-        <button style={styles.btn} onClick={connect} disabled={connecting}>
-          {connecting ? 'Connecting...' : 'Connect Wallet'}
-        </button>
-      )}
+      <div style={{ display: 'flex', gap: 8 }}>
+        {address ? (
+          <div style={styles.addrBadge}>
+            {address.slice(0, 6)}...{address.slice(-4)}
+          </div>
+        ) : (
+          <>
+            <button style={{ ...styles.btn, background: '#f5f5f5', color: '#111' }} onClick={connect} disabled={connecting}>
+              {connecting ? '...' : 'Browser Wallet'}
+            </button>
+            <button style={styles.btn} onClick={connectCoinbase} disabled={connecting}>
+              {connecting ? '...' : 'Coinbase Wallet'}
+            </button>
+          </>
+        )}
+      </div>
     </nav>
   )
 }
